@@ -1,0 +1,1 @@
+# plugins-pdf-thumbnail-generator
