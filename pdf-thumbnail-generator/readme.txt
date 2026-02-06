@@ -4,8 +4,8 @@ Donate link: https://www.paypal.me/jakubnovaksl
 Tags: pdf, image, thumbnail, generator, creator
 Requires at least: 3.0.1
 Requires PHP: 5.6
-Tested up to: 6.6
-Stable tag: 1.4
+Tested up to: 6.9
+Stable tag: 1.5
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
@@ -43,6 +43,11 @@ Maybe you want to display PDF thumbnail by using a shortcode
 Maybe you want to display PDF thumbnail url by using a shortcode
 
 `[pdf_thumbnail_url id="123"]`
+
+### pdf_clickable_thumbnail
+Maybe you want to display clickable PDF thumbnail that will open PDF in new tab
+
+`[pdf_clickable_thumbnail id="123"]`
  
 ## Functions
 
@@ -205,6 +210,11 @@ thumbnail: `/wp-content/uploads/2022/01/example.pdf.png`
 
 
 == Changelog ==
+
+= 1.5 =
+* tested on WP 6.9
+* new shortcode [pdf_clickable_thumbnail id="123"] displays clickable PDF thumbnail that will open PDF in new tab on click
+* csrf security fix
 
 = 1.4 =
 * fix: more URL escaping

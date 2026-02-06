@@ -3,7 +3,7 @@
 	Plugin Name: PDF Thumbnail Generator
 	Plugin URI: https://wp-speedup.eu
 	Description: Generates thumbnail for PDF files
-	Version: 1.4
+	Version: 1.5
 	Author: KubiQ
 	Author URI: https://kubiq.sk
 	Text Domain: pdf-thumbnail-generator
@@ -27,7 +27,7 @@ if( ! class_exists('pdf_thumbnail_generator') ){
 			add_shortcode( 'pdf_thumbnail', function( $atts ){
 				if( is_admin() ) return true;
 				
-				if( ! isset( $atts['id'] ) || ! intval( $atts['id'] ) ) return false;
+				if( empty( $atts['id'] ) ) return false;
 			
 				return get_pdf_thumbnail_image( $atts['id'] );
 			});
@@ -35,9 +35,17 @@ if( ! class_exists('pdf_thumbnail_generator') ){
 			add_shortcode( 'pdf_thumbnail_url', function( $atts ){
 				if( is_admin() ) return true;
 				
-				if( ! isset( $atts['id'] ) || ! intval( $atts['id'] ) ) return false;
+				if( empty( $atts['id'] ) ) return false;
 			
 				return $this->get_url( $atts['id'] );
+			});
+
+			add_shortcode( 'pdf_clickable_thumbnail', function( $atts ){
+				if( is_admin() ) return true;
+				
+				if( empty( $atts['id'] ) ) return false;
+			
+				return '<a href="' . wp_get_attachment_url( $atts['id'] ) . '" target="_blank">' . get_pdf_thumbnail_image( $atts['id'] ) . '</a>';
 			});
 		}
 
@@ -83,7 +91,10 @@ if( ! class_exists('pdf_thumbnail_generator') ){
 
 		function admin_options_page(){
 			global $wpdb;
-			if( isset( $_GET['generate'] ) ){ ?>
+			if( isset( $_GET['generate'] ) ){
+				if( ! isset( $_GET['_wpnonce'] ) || ! wp_verify_nonce( $_GET['_wpnonce'], 'generate_pdf_thumbs' ) ){
+					wp_die( __( 'Security check failed', 'pdf-thumbnail-generator' ) );
+				} ?>
 				<div class="wrap">
 					<h2><?php _e( 'Generating PDF thumbnails...', 'pdf-thumbnail-generator' ) ?></h2>
 					<div id="pdf-list"><?php
@@ -181,11 +192,12 @@ if( ! class_exists('pdf_thumbnail_generator') ){
 
 					<p><?php esc_html_e( 'If you changed some settings, please save them firstly.', 'pdf-thumbnail-generator' ) ?></p>
 
-					<a href="<?php echo esc_url( add_query_arg( 'generate', 'missing' ) ) ?>" class="button button-primary">
+					<?php $nonce = wp_create_nonce('generate_pdf_thumbs') ?>
+					<a href="<?php echo esc_url( add_query_arg([ 'generate' => 'missing', '_wpnonce' => $nonce ]) ) ?>" class="button button-primary">
 						<?php esc_html_e( 'Generate missing PDF thumbnails', 'pdf-thumbnail-generator' ) ?>
 					</a>
 					&emsp;
-					<a href="<?php echo esc_url( add_query_arg( 'generate', 'all' ) ) ?>" class="button button-primary">
+					<a href="<?php echo esc_url( add_query_arg([ 'generate' => 'all', '_wpnonce' => $nonce ]) ) ?>" class="button button-primary">
 						<?php esc_html_e( 'Regenerate all PDF thumbnails', 'pdf-thumbnail-generator' ) ?>
 					</a>
 				</div><?php
